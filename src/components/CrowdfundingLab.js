@@ -63,6 +63,11 @@ function CrowdfundingLab(){
     const [milestones,setMilestones] = useState([]);
 
     useEffect(() => {
+        setDacs([]);
+        setCampaings([]);
+        setMilestones([]);
+
+
         setInvalidAddress(false);
         console.log("initializing crowdfunding...")
         const web3 = new Web3(window.ethereum);

@@ -7,6 +7,7 @@ import CrowdfundingLab from './components/CrowdfundingLab';
 const AppWrapper = styled.div`
   height:100vh;
   width:100%;
+  padding:0px 10px;
   box-sizing:border-box;
 `
 const AppHeader = styled.div`
