@@ -54,6 +54,12 @@ function App() {
         
         setWeb3(web3);
         setNetId(await web3.eth.net.getId());
+
+        const netVersion  = await window.ethereum.request({ method: 'net_version' });
+        if (netVersion && netVersion.result){
+          setNetId(netVersion.result)
+        }
+
         if(account){
           setBalance(await web3.eth.getBalance(account));
         }
