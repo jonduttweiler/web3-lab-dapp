@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import styled from 'styled-components';
 import CrowdfundingLab from './components/CrowdfundingLab';
+import logo from './logo.png';
 
 const AppWrapper = styled.div`
   height:100vh;
@@ -13,10 +14,19 @@ const AppWrapper = styled.div`
 const AppHeader = styled.div`
   display:flex;
   justify-content:center;
+  align-items:center;
   padding:20px;
 `
 const Row = styled.div`
   padding: 5px;
+`
+
+const Logo = styled.img`
+  max-width:80px;
+  height:auto;
+`
+const Title = styled.h2`
+  padding:10px;
 `
 
 
@@ -60,7 +70,10 @@ function App() {
 
   return (
     <AppWrapper>
-      <AppHeader>Dapps Lab</AppHeader>
+      <AppHeader>
+        <Logo src={logo}></Logo>
+        <Title>Dapps Lab</Title>
+        </AppHeader>
       <Row>Account: {account}</Row>
       <Row>Net id: {netId}</Row>
       <CrowdfundingLab web3={web3}/>
