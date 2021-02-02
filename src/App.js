@@ -2,6 +2,7 @@ import Web3 from 'web3';
 import { useEffect, useState } from 'react';
 import './App.css';
 import styled from 'styled-components';
+import CrowdfundingLab from './components/CrowdfundingLab';
 
 const AppWrapper = styled.div`
   height:100vh;
@@ -61,6 +62,7 @@ function App() {
       <AppHeader>Dapps Lab</AppHeader>
       <Row>Account: {account}</Row>
       <Row>Net id: {netId}</Row>
+      <CrowdfundingLab web3={web3}/>
     </AppWrapper>
   );
 }
