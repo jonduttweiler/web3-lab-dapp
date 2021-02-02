@@ -2,8 +2,10 @@ import Web3 from "web3";
 import { CrowdfundingAbi } from "@acdi/give4forests-crowdfunding-contract";
 import styled from "styled-components";
 import { CircularProgress } from "@material-ui/core";
-
 import { useEffect, useState } from "react";
+
+import EntityCard from "./cards/EntityCard";
+
 
 const MethodsWrapper = styled.div`
   padding: 10px;
@@ -28,7 +30,7 @@ const Chip = styled.div`
 const DLabButton = styled.div`
   cursor: pointer;
   border: 2px solid tomato;
-  padding: 10px 15px;
+  padding: 5px 10px;
   margin: 10px;
   border-radius: 50px;
   color: tomato;
@@ -56,6 +58,9 @@ const AddressInput = styled.input`
 
 const ErrorWrapper = styled.div`
   border: 2px solid red;
+  color:red;
+  padding:5px;
+  border-radius:5px;
 `;
 
 function CrowdfundingLab() {
@@ -67,7 +72,7 @@ function CrowdfundingLab() {
   const [crowdfunding, setCrowdfunding] = useState();
   const [invalidAddress, setInvalidAddress] = useState();
   const [dacs, setDacs] = useState([]);
-  const [campaigns, setCampaings] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
   const [milestones, setMilestones] = useState([]);
   const [error, setError] = useState();
   const [loading, setLoading] = useState({
@@ -78,7 +83,7 @@ function CrowdfundingLab() {
 
   useEffect(() => {
     setDacs([]);
-    setCampaings([]);
+    setCampaigns([]);
     setMilestones([]);
 
     setInvalidAddress(false);
@@ -103,7 +108,12 @@ function CrowdfundingLab() {
     clearError();
     try {
       setLoading({ dacs: true });
-      const dacs = await crowdfunding.methods.getDacIds().call();
+      const dacs = [];
+      const dacsIds = await crowdfunding.methods.getDacIds().call();
+      for(const dacId of dacsIds){
+          const dac = await crowdfunding.methods.getDac(dacId).call();
+          dacs.push(dac);
+      }
       setDacs(dacs);
     } catch (err) {
       setError(err);
@@ -115,8 +125,13 @@ function CrowdfundingLab() {
     clearError();
     try {
       setLoading({ campaigns: true });
-      const campaigns = await crowdfunding.methods.getCampaignIds().call();
-      setCampaings(campaigns);
+      const campaigns = [];
+      const campaignsIds = await crowdfunding.methods.getCampaignIds().call();
+      for(const campaignId of campaignsIds){
+          const campaign = await crowdfunding.methods.getCampaign(campaignId).call();
+          campaigns.push(campaign)
+      }
+      setCampaigns(campaigns);
     } catch (err) {
       setError(err);
     }
@@ -127,7 +142,13 @@ function CrowdfundingLab() {
     clearError();
     try {
       setLoading({ milestones: true });
-      const milestones = await crowdfunding.methods.getMilestoneIds().call();
+      const milestones = [];
+      const milestonesIds = await crowdfunding.methods.getMilestoneIds().call();
+      for(const milestoneId of milestonesIds){
+          const milestone = await crowdfunding.methods.getMilestone(milestoneId).call();
+          milestones.push(milestone)
+      }
+      window.milestones = milestones
       setMilestones(milestones);
     } catch (err) {
       setError(err);
@@ -147,38 +168,33 @@ function CrowdfundingLab() {
       </div>
       <Row>
         <DLabButton onClick={loadDacs}>
-          getDacIds
+          getDacs
           {loading.dacs && (
             <CircularProgress style={{margin:"0px 5px"}} color="secondary" size={15}></CircularProgress>
           )}
         </DLabButton>
 
-        {dacs.map((dac, idx) => (
-          <Chip key={idx}>{dac}</Chip>
-        ))}
+        {dacs.map((dac, idx) => (<EntityCard key={idx} entity={dac}></EntityCard>))}
+
       </Row>
       <Row>
         <DLabButton onClick={loadCampaigns}>
-          getCampaignIds
+          getCampaigns
           {loading.campaigns && (
             <CircularProgress style={{margin:"0px 5px"}} color="secondary" size={15}></CircularProgress>
           )}
         </DLabButton>
-        {campaigns.map((campaign, idx) => (
-          <Chip key={idx}>{campaign}</Chip>
-        ))}
+        {campaigns.map((campaign, idx) => (<EntityCard key={idx} entity={campaign}></EntityCard>))}
       </Row>
       <Row>
         <DLabButton onClick={loadMilestones}>
-          getMilestoneIds
+          getMilestones
           {loading.milestones && (
             <CircularProgress style={{margin:"0px 5px"}} color="secondary" size={15}></CircularProgress>
           )}
         </DLabButton>
 
-        {milestones.map((milestone, idx) => (
-          <Chip key={idx}>{milestone}</Chip>
-        ))}
+        {milestones.map((milestone, idx) => (<EntityCard key={idx} entity={milestone}></EntityCard>))}
       </Row>
 
       <MethodsWrapper>
