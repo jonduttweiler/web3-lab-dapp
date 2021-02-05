@@ -5,15 +5,17 @@ import { CircularProgress } from "@material-ui/core";
 import { useEffect, useState } from "react";
 
 import EntityCard from "./cards/EntityCard";
-import { MethodsWrapper, Row, Chip, DLabButton, AddressInput } from './styled/CrowdfundingLab';
+import {
+  MethodsWrapper, 
+  Row, 
+  Chip, 
+  DLabButton, 
+  AddressInput,
+  ErrorWrapper,
+  ErrorName,
+  ErrorMessage
+} from './styled/CrowdfundingLab';
 
-
-const ErrorWrapper = styled.div`
-  border: 2px solid red;
-  color:red;
-  padding:5px;
-  border-radius:5px;
-`;
 
 function CrowdfundingLab() {
   console.log("[CrowdfundingLab] render");
@@ -39,17 +41,23 @@ function CrowdfundingLab() {
     setMilestones([]);
 
     setInvalidAddress(false);
-    console.log("initializing crowdfunding...");
-    const web3 = new Web3(window.ethereum);
-    try {
-      const crowdfunding = new web3.eth.Contract(CrowdfundingAbi, address);
-      setCrowdfunding(crowdfunding);
-      const methods = Object.keys(crowdfunding.methods);
-      setMethods(methods);
-    } catch (err) {
-      console.log("invalid address");
-      setInvalidAddress(true);
+    async function initSmartContract(){    
+      console.log("initializing crowdfunding...");
+      const web3 = new Web3(window.ethereum); //what about window.web3?
+      await window.ethereum.enable();
+      
+      try {
+        const crowdfunding = new web3.eth.Contract(CrowdfundingAbi, address);
+        setCrowdfunding(crowdfunding);
+        const methods = Object.keys(crowdfunding.methods);
+        setMethods(methods);
+      } catch (err) {
+        console.log("invalid address");
+        setInvalidAddress(true);
+      }
     }
+
+    initSmartContract();
   }, [address]);
 
   function clearError() {
@@ -61,11 +69,12 @@ function CrowdfundingLab() {
       setLoading({ dacs: true });
       const dacs = [];
       const dacsIds = await crowdfunding.methods.getDacIds().call();
-      for(const dacId of dacsIds){
+      alert(dacsIds)
+   /*    for(const dacId of dacsIds){
           const dac = await crowdfunding.methods.getDac(dacId).call();
           dacs.push(dac);
       }
-      setDacs(dacs);
+      setDacs(dacs); */
     } catch (err) {
       setError(err);
     }
@@ -109,6 +118,10 @@ function CrowdfundingLab() {
 
   return (
     <div>
+
+
+
+
       <div>
         Test crowdfunding smart contract:
         <AddressInput
@@ -151,7 +164,11 @@ function CrowdfundingLab() {
       <MethodsWrapper>
         {/* {methods.filter(m => !m.startsWith("0x")).map((method,idx) => <div key={idx}>{method}</div>)} */}
       </MethodsWrapper>
-      {error && <ErrorWrapper>{error.message}</ErrorWrapper>}
+      {error && <ErrorWrapper>
+        <ErrorName>{error.name}</ErrorName>
+        <ErrorMessage>{error.message}</ErrorMessage>
+        <div>{error.stack}</div>
+        </ErrorWrapper>}
     </div>
   );
 }

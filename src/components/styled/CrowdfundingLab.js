@@ -48,3 +48,24 @@ export const AddressInput = styled.input`
   }}
   width:100%;
 `;
+
+export const ErrorWrapper = styled.div`
+  border: 2px solid red;
+  color:red;
+  padding:5px;
+  border-radius:5px;
+`;
+
+export const ErrorName = styled.div`
+  font-size:20px; 
+  font-weight:bold;
+  margin:10px;
+`
+
+
+export const ErrorMessage = styled.div`
+  font-size:15px; 
+  font-weight:bold;
+  margin-left:5px;
+  
+`
